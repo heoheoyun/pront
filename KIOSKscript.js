@@ -5,19 +5,31 @@ const emptyMessage = cart.querySelector('.empty-message');
 const adminPasswordInput = document.querySelector('#admin-password');
 const adminLoginButton = document.querySelector('#admin-login');
 const managementSection = document.querySelector('.management');
-
-const addMenuButton = document.querySelector('#add-menu');
-const menuNameInput = document.querySelector('#menu-name');
-const menuPriceInput = document.querySelector('#menu-price');
-const salesList = document.querySelector('#sales-list');
-const totalSales = document.querySelector('#total-sales');
+const adminLogoutButton = document.querySelector('#admin-logout');  // 로그아웃 버튼 추가
 
 let salesData = [];
 let totalSalesAmount = 0;
 
-const ADMIN_PASSWORD = "admin1234"; // 관리자 비밀번호
+const ADMIN_PASSWORD = "admin1234";  // 관리자 비밀번호 
 
-// Drag and Drop Handlers
+// 관리자 로그인
+adminLoginButton.addEventListener('click', () => {
+    if (adminPasswordInput.value === ADMIN_PASSWORD) {
+        managementSection.classList.remove('hidden');
+        adminPasswordInput.value = '';
+        alert('관리자 모드에 진입했습니다.');
+    } else {
+        alert('비밀번호가 틀렸습니다.');
+    }
+});
+
+// 관리자 로그아웃
+adminLogoutButton.addEventListener('click', () => {
+    managementSection.classList.add('hidden');  // 관리자 기능 영역 숨기기
+    alert('관리자 모드에서 로그아웃되었습니다.');  // 알림 메시지
+});
+
+// 드래그 앤 드롭 처리
 menu.addEventListener('dragstart', (e) => {
     if (e.target.classList.contains('menu-item')) {
         e.dataTransfer.setData('text/plain', JSON.stringify({
@@ -80,14 +92,3 @@ function updateCheckoutButton() {
     const itemsInCart = cart.querySelectorAll('.cart-item');
     checkoutButton.disabled = itemsInCart.length === 0;
 }
-
-// 관리자 로그인
-adminLoginButton.addEventListener('click', () => {
-    if (adminPasswordInput.value === ADMIN_PASSWORD) {
-        managementSection.classList.remove('hidden');
-        adminPasswordInput.value = '';
-        alert('관리자 모드에 진입했습니다.');
-    } else {
-        alert('비밀번호가 틀렸습니다.');
-    }
-});

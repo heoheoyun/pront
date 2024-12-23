@@ -4,18 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drag and Drop KIOSK</title>
-    <!-- CSS 연결 -->
     <link rel="stylesheet" href="KIOSKstyle.css">
-    <!-- JavaScript 연결 -->
     <script src="KIOSKscript.js" defer></script>
 </head>
 <body>
     <h1>Drag and Drop KIOSK</h1>
     <div class="container">
-        <!-- 메뉴 영역 -->
         <div class="menu">
             <h2>메뉴</h2>
-            <!-- 이미지와 메뉴 데이터 -->
             <div class="menu-item" draggable="true" data-name="아메리카노" data-price="4000">
                 <img src="images/americano.jpg" alt="아메리카노">
                 아메리카노 - 4,000원
@@ -26,20 +22,17 @@
             </div>
         </div>
 
-        <!-- 장바구니 영역 -->
         <div class="cart">
             <h2>장바구니</h2>
             <div class="empty-message">드래그하여 메뉴를 추가하세요.</div>
         </div>
     </div>
 
-    <!-- 관리자 접근 -->
     <div class="admin-access">
         <input type="password" id="admin-password" placeholder="관리자 비밀번호 입력">
         <button id="admin-login">로그인</button>
     </div>
 
-    <!-- 관리자 기능 -->
     <div class="management hidden">
         <h2>관리자 기능</h2>
         <input type="text" id="menu-name" placeholder="메뉴 이름">
@@ -47,6 +40,7 @@
         <button id="add-menu">메뉴 추가</button>
         <button id="delete-menu" class="danger">메뉴 삭제</button>
         <button id="clear-sales-log">판매 내역 초기화</button>
+        <button id="admin-logout" class="logout">로그아웃</button> <!-- 로그아웃 버튼 추가 -->
         <div class="sales-log">
             <h3>판매 내역</h3>
             <ul id="sales-list"></ul>
@@ -54,7 +48,6 @@
         </div>
     </div>
 
-    <!-- 결제 버튼 -->
     <button class="checkout" disabled>결제</button>
 </body>
 </html>
