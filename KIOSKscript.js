@@ -15,7 +15,7 @@ const totalSales = document.querySelector('#total-sales');
 let salesData = [];
 let totalSalesAmount = 0;
 
-const ADMIN_PASSWORD = "admin123"; // 관리자 비밀번호
+const ADMIN_PASSWORD = "admin1234"; // 관리자 비밀번호
 
 // Drag and Drop Handlers
 menu.addEventListener('dragstart', (e) => {
