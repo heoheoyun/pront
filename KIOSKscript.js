@@ -51,40 +51,14 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('이미 장바구니에 있는 메뉴입니다.');
             return;
         }
-
-        // 장바구니에 메뉴 추가
-        cartItems.push({...menu, quantity: 1});
-        updateCart();
-    });
-
-    // 메뉴에서 장바구니로 항목을 다시 끌어 놓을 수 있도록 설정
-    cart.addEventListener('dragstart', function (event) {
-        // 장바구니 항목에 대한 dragstart 처리
-        const cartItem = event.target;
-        if (cartItem.classList.contains('cart-item')) {
-            event.dataTransfer.setData('cartItem', JSON.stringify(cartItem.dataset));
         }
-    });
 
-    // 장바구니에서 메뉴를 다시 메뉴 영역으로 드롭하여 선택 취소
-    const menuArea = document.querySelector('.menu');
-    menuArea.addEventListener('dragover', function (event) {
-        event.preventDefault();
-    });
+    function handleAdminLogout() {
+        localStorage.removeItem('adminLoggedIn');
+        adminAccess.classList.remove('hidden');
+        managementDiv.classList.add('hidden');
+    }
 
-    menuArea.addEventListener('drop', function (event) {
-        event.preventDefault();
-
-        const data = event.dataTransfer.getData('cartItem');
-        if (data) {
-            const cartItemData = JSON.parse(data);
-            // 장바구니에서 항목 삭제
-            cartItems = cartItems.filter(item => item.name !== cartItemData.name);
-            updateCart();
-        }
-    });
-
-    // 장바구니 업데이트 함수
     function updateCart() {
         cart.innerHTML = '<h2>장바구니</h2>';
         let totalAmount = 0;
@@ -92,7 +66,6 @@ document.addEventListener('DOMContentLoaded', function () {
         cartItems.forEach(item => {
             const cartItem = document.createElement('div');
             cartItem.className = 'cart-item';
-            cartItem.draggable = true;
             cartItem.dataset.name = item.name;
             cartItem.innerHTML = `
                 ${item.name} - ${item.price}원 x ${item.quantity} = ${item.price * item.quantity}원
@@ -151,27 +124,17 @@ document.addEventListener('DOMContentLoaded', function () {
         receiptList.appendChild(totalPriceElement);
 
         receiptDiv.classList.remove('hidden');
-        
-        // 판매 내역 기록
         saveSalesLog(cartItems, totalAmount);
         
-        // 장바구니 초기화
         cartItems = [];
         updateCart();
     });
 
-    // 관리자 로그인
-    adminLoginButton.addEventListener('click', function () {
-        if (adminPasswordInput.value === adminPassword) {
-            adminAccess.classList.add('hidden');
-            managementDiv.classList.remove('hidden');
-            loginError.classList.add('hidden');
-            // 관리자 로그인 상태를 LocalStorage에 저장
-            localStorage.setItem('adminLoggedIn', true);
-        } else {
-            alert('비밀번호가 틀렸습니다.');
-        }
-    });
+    function saveSalesLog(items, totalAmount) {
+        const salesLog = JSON.parse(localStorage.getItem('salesLog')) || [];
+        salesLog.push({ items, totalAmount });
+        localStorage.setItem('salesLog', JSON.stringify(salesLog));
+    }
 
     // 관리자 로그아웃
     adminLogoutButton.addEventListener('click', function () {
@@ -214,25 +177,8 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             removeMenu(menuName); // 메뉴 삭제
         }
-    });
-
-    // 판매 내역 초기화
-    clearSalesLogButton.addEventListener('click', function () {
-        salesList.innerHTML = '';
-        totalSales = 0;
-        totalSalesSpan.textContent = totalSales;
-
-        localStorage.removeItem('salesLog'); // 판매 내역 초기화
-    });
-
-    // 판매 내역 저장
-    function saveSalesLog(items, totalAmount) {
-        const salesLog = JSON.parse(localStorage.getItem('salesLog')) || [];
-        salesLog.push({ items, totalAmount });
-        localStorage.setItem('salesLog', JSON.stringify(salesLog));
     }
 
-    // 메뉴 저장
     function saveMenu(name, price) {
         const menuList = JSON.parse(localStorage.getItem('menuList')) || [];
         menuList.push({ name, price });
@@ -274,8 +220,6 @@ document.addEventListener('DOMContentLoaded', function () {
             salesList.appendChild(listItem);
         });
 
-        // 총 판매 금액 업데이트
-        totalSales = salesLog.reduce((acc, sale) => acc + sale.totalAmount, 0);
         totalSalesSpan.textContent = totalSales;
     }
 
