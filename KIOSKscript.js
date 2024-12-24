@@ -19,7 +19,6 @@ window.onload = function () {
     const menuNameInput = document.getElementById('menu-name');
     const menuPriceInput = document.getElementById('menu-price');
     const addMenuButton = document.getElementById('add-menu');
-    const deleteMenuButton = document.getElementById('delete-menu');
     const clearSalesLogButton = document.getElementById('clear-sales-log');
 
     function handleAdminLogin() {
@@ -41,7 +40,8 @@ window.onload = function () {
     function updateCart() {
         cart.innerHTML = '<h2>장바구니</h2>';
         let totalAmount = 0;
-
+    
+        // 장바구니 항목 처리
         cartItems.forEach(item => {
             const cartItem = document.createElement('div');
             cartItem.className = 'cart-item';
@@ -52,40 +52,50 @@ window.onload = function () {
                 <button data-name="${item.name}" data-action="decrease">-</button>
                 <button data-name="${item.name}" data-action="remove">삭제</button>`;
             cart.appendChild(cartItem);
-
+    
             totalAmount += item.price * item.quantity;
         });
-
+    
+        // 총액 표시
         totalPriceSpan.textContent = totalAmount;
         checkoutButton.disabled = cartItems.length === 0;
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
     }
+    
 
     function handleCheckout() {
         if (cartItems.length === 0) {
             alert("장바구니가 비어있습니다.");
             return;
         }
-
+    
+        // 총액 계산
         const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
+    
+        // 영수증 리스트 출력
         receiptList.innerHTML = '';
         cartItems.forEach(item => {
             const li = document.createElement('li');
             li.textContent = `${item.name} - ${item.price}원 x ${item.quantity} = ${item.price * item.quantity}원`;
             receiptList.appendChild(li);
         });
-
+    
+        // 총액 표시
         const totalPriceElement = document.createElement('li');
         totalPriceElement.textContent = `총 합계: ${totalAmount}원`;
         receiptList.appendChild(totalPriceElement);
-
+    
+        // 영수증 표시
         receiptDiv.classList.remove('hidden');
+    
+        // 판매 내역 기록
         saveSalesLog(cartItems, totalAmount);
-
+    
+        // 장바구니 비우기 및 갱신
         cartItems = [];
         updateCart();
     }
+    
 
     function saveSalesLog(items, totalAmount) {
         const salesLog = JSON.parse(localStorage.getItem('salesLog')) || [];
