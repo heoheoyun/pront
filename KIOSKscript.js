@@ -8,6 +8,7 @@ window.onload = function () {
     const managementDiv = document.querySelector('.management');
     const adminLoginButton = document.getElementById('admin-login');
     const adminPasswordInput = document.getElementById('admin-password');
+    const adminLogoutButton = document.getElementById('admin-logout');
     const menuItems = document.querySelector('.menu');
     const cart = document.querySelector('.cart');
     const checkoutButton = document.querySelector('.checkout');
@@ -21,12 +22,12 @@ window.onload = function () {
     const addMenuButton = document.getElementById('add-menu');
     const deleteMenuButton = document.getElementById('delete-menu');
     const clearSalesLogButton = document.getElementById('clear-sales-log');
-    const adminLogoutButton = document.getElementById('admin-logout'); // 관리자 로그아웃 버튼
 
     function handleAdminLogin() {
         if (adminPasswordInput.value === adminPassword) {
             adminAccess.classList.add('hidden');
             managementDiv.classList.remove('hidden');
+            adminLogoutButton.classList.remove('hidden');
             localStorage.setItem('adminLoggedIn', 'true');
         } else {
             alert('비밀번호가 틀렸습니다.');
@@ -37,25 +38,31 @@ window.onload = function () {
         localStorage.removeItem('adminLoggedIn');
         adminAccess.classList.remove('hidden');
         managementDiv.classList.add('hidden');
+        adminLogoutButton.classList.add('hidden');
     }
 
     function updateCart() {
-        const cartDiv = document.querySelector('.cart');
-        cartDiv.innerHTML = '<h2>장바구니</h2>';
+        cart.innerHTML = '<h2>장바구니</h2>';
         let totalAmount = 0;
 
-        cartItems.forEach(item => {
-            const cartItem = document.createElement('div');
-            cartItem.className = 'cart-item';
-            cartItem.dataset.name = item.name;
-            cartItem.innerHTML = `${item.name} - ${item.price}원 x ${item.quantity} = ${item.price * item.quantity}원
-                <button data-name="${item.name}" data-action="increase">+</button>
-                <button data-name="${item.name}" data-action="decrease">-</button>
-                <button data-name="${item.name}" data-action="remove">삭제</button>`;
-            cartDiv.appendChild(cartItem);
-
-            totalAmount += item.price * item.quantity;
-        });
+        if (cartItems.length === 0) {
+            const emptyMessage = document.createElement('div');
+            emptyMessage.className = 'empty-message';
+            emptyMessage.textContent = '드래그하여 메뉴를 추가하세요.';
+            cart.appendChild(emptyMessage);
+        } else {
+            cartItems.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.dataset.name = item.name;
+                cartItem.innerHTML = `${item.name} - ${item.price}원 x ${item.quantity} = ${item.price * item.quantity}원
+                    <button data-name="${item.name}" data-action="increase">+</button>
+                    <button data-name="${item.name}" data-action="decrease">-</button>
+                    <button data-name="${item.name}" data-action="remove">삭제</button>`;
+                cart.appendChild(cartItem);
+                totalAmount += item.price * item.quantity;
+            });
+        }
 
         totalPriceSpan.textContent = totalAmount;
         checkoutButton.disabled = cartItems.length === 0;
@@ -111,7 +118,7 @@ window.onload = function () {
             newMenuItem.dataset.name = menuName;
             newMenuItem.dataset.price = menuPrice;
             newMenuItem.innerHTML = `${menuName} - ${menuPrice}원`;
-            document.querySelector('.menu').appendChild(newMenuItem);
+            menuItems.appendChild(newMenuItem);
 
             saveMenu(menuName, menuPrice);
             menuNameInput.value = '';
@@ -136,7 +143,7 @@ window.onload = function () {
             newMenuItem.dataset.name = menu.name;
             newMenuItem.dataset.price = menu.price;
             newMenuItem.innerHTML = `${menu.name} - ${menu.price}원`;
-            document.querySelector('.menu').appendChild(newMenuItem);
+            menuItems.appendChild(newMenuItem);
         });
     }
 
@@ -153,11 +160,11 @@ window.onload = function () {
         totalSalesSpan.textContent = totalSales;
     }
 
-    document.querySelector('.menu').addEventListener('dragstart', function(event) {
+    menuItems.addEventListener('dragstart', function(event) {
         if (event.target.classList.contains('menu-item')) {
             event.dataTransfer.setData('menu', JSON.stringify({
                 name: event.target.dataset.name,
-                price: event.target.dataset.price
+                price: parseInt(event.target.dataset.price, 10)
             }));
         }
     });
@@ -168,7 +175,8 @@ window.onload = function () {
         const data = event.dataTransfer.getData('menu');
         const menu = JSON.parse(data);
 
-        if (cartItems.some(item => item.name === menu.name)) {
+        const existingItem = cartItems.find(item => item.name === menu.name);
+        if (existingItem) {
             alert('이미 장바구니에 있는 메뉴입니다.');
             return;
         }
@@ -198,7 +206,7 @@ window.onload = function () {
 
     checkoutButton.addEventListener('click', handleCheckout);
     adminLoginButton.addEventListener('click', handleAdminLogin);
-    adminLogoutButton.addEventListener('click', handleAdminLogout);  // 로그아웃 기능 추가
+    adminLogoutButton.addEventListener('click', handleAdminLogout);
     addMenuButton.addEventListener('click', handleAddMenu);
     clearSalesLogButton.addEventListener('click', () => {
         salesList.innerHTML = '';
