@@ -9,63 +9,47 @@
 </head>
 <body>
     <h1>Drag and Drop KIOSK</h1>
-    <div class="container">
-        <!-- 메뉴 영역 -->
-        <div class="menu">
-            <h2>메뉴</h2>
-            <div class="menu-item" draggable="true" data-name="아메리카노" data-price="4000">
-                <img src="images/americano.jpg" alt="아메리카노">
-                <p>아메리카노 - 4,000원</p>
-            </div>
-            <div class="menu-item" draggable="true" data-name="카페라떼" data-price="4500">
-                <img src="images/latte.jpg" alt="카페라떼">
-                <p>카페라떼 - 4,500원</p>
-            </div>
-            <div class="menu-item" draggable="true" data-name="카푸치노" data-price="5000">
-                <img src="images/cappuccino.jpg" alt="카푸치노">
-                <p>카푸치노 - 5,000원</p>
-            </div>
+    <div class="menu">
+        <h2>메뉴</h2>
+        <div class="menu-item" draggable="true" data-name="아메리카노" data-price="4000">
+            <img src="images/americano.jpg" alt="아메리카노">
+            <p>아메리카노 - 4,000원</p>
         </div>
-
-        <!-- 장바구니 영역 -->
-        <div class="cart">
-            <h2>장바구니</h2>
-            <div class="empty-message">드래그하여 메뉴를 추가하세요.</div>
+        <div class="menu-item" draggable="true" data-name="카페라떼" data-price="4500">
+            <img src="images/latte.jpg" alt="카페라떼">
+            <p>카페라떼 - 4,500원</p>
         </div>
-
-        <!-- 결제 버튼 -->
-        <button class="checkout" disabled>결제</button>
-
-        <!-- 영수증 영역 -->
-        <div class="receipt hidden">
-            <h2>영수증</h2>
-            <ul id="receipt-list"></ul>
-            <p>총액: <span id="total-price">0</span>원</p>
+        <div class="menu-item" draggable="true" data-name="카푸치노" data-price="5000">
+            <img src="images/cappuccino.jpg" alt="카푸치노">
+            <p>카푸치노 - 5,000원</p>
         </div>
     </div>
-
-    <!-- 관리자 접근 -->
+    <div class="cart">
+        <h2>장바구니</h2>
+        <div class="empty-message">드래그하여 메뉴를 추가하세요.</div>
+    </div>
+    <button class="checkout" disabled>결제</button>
+    <div class="receipt hidden">
+        <h2>영수증</h2>
+        <ul id="receipt-list"></ul>
+        <p>총액: <span id="total-price">0</span>원</p>
+    </div>
     <div class="admin-access">
         <input type="password" id="admin-password" placeholder="관리자 비밀번호 입력">
         <button id="admin-login">로그인</button>
     </div>
-
-    <!-- 관리자 기능 -->
     <div class="management hidden">
         <h2>관리자 기능</h2>
         <input type="text" id="menu-name" placeholder="메뉴 이름">
         <input type="number" id="menu-price" placeholder="메뉴 가격">
         <button id="add-menu">메뉴 추가</button>
-        <button id="delete-menu" class="danger">메뉴 삭제</button>
         <button id="clear-sales-log">판매 내역 초기화</button>
         <div class="sales-log">
             <h3>판매 내역</h3>
             <ul id="sales-list"></ul>
             <p>총 판매 금액: <span id="total-sales">0</span>원</p>
         </div>
+        <button id="admin-logout">로그아웃</button>
     </div>
-
-    <!-- 관리자 로그아웃 -->
-    <button id="admin-logout" class="danger hidden">로그아웃</button>
 </body>
 </html>
