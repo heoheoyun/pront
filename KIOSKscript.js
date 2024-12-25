@@ -21,11 +21,15 @@ window.onload = function () {
     const addMenuButton = document.getElementById('add-menu');
     const clearSalesLogButton = document.getElementById('clear-sales-log');
 
+    // 기본적으로 관리자 기능 숨김
+    managementDiv.classList.add('hidden');
+
     function handleAdminLogin() {
-        if (adminPasswordInput.value === adminPassword) {
+        if (adminPasswordInput.value.trim() === adminPassword) {
             adminAccess.classList.add('hidden');
             managementDiv.classList.remove('hidden');
             localStorage.setItem('adminLoggedIn', 'true');
+            adminPasswordInput.value = '';
         } else {
             alert('비밀번호가 틀렸습니다.');
         }
@@ -40,66 +44,57 @@ window.onload = function () {
     function updateCart() {
         cart.innerHTML = '<h2>장바구니</h2>';
         let totalAmount = 0;
-    
-        // 장바구니 항목 처리
+
         cartItems.forEach(item => {
             const cartItem = document.createElement('div');
             cartItem.className = 'cart-item';
             cartItem.dataset.name = item.name;
+            cartItem.draggable = true;
             cartItem.innerHTML = `
                 ${item.name} - ${item.price}원 x ${item.quantity} = ${item.price * item.quantity}원
                 <button data-name="${item.name}" data-action="increase">+</button>
                 <button data-name="${item.name}" data-action="decrease">-</button>
                 <button data-name="${item.name}" data-action="remove">삭제</button>`;
             cart.appendChild(cartItem);
-    
+
             totalAmount += item.price * item.quantity;
         });
-    
-        // 총액 표시
-        totalPriceSpan.textContent = totalAmount;
+
+        totalPriceSpan.textContent = totalAmount.toLocaleString();
         checkoutButton.disabled = cartItems.length === 0;
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
     }
-    
 
     function handleCheckout() {
         if (cartItems.length === 0) {
             alert("장바구니가 비어있습니다.");
             return;
         }
-    
-        // 총액 계산
+
         const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    
-        // 영수증 리스트 출력
+
         receiptList.innerHTML = '';
         cartItems.forEach(item => {
             const li = document.createElement('li');
             li.textContent = `${item.name} - ${item.price}원 x ${item.quantity} = ${item.price * item.quantity}원`;
             receiptList.appendChild(li);
         });
-    
-        // 총액 표시
+
         const totalPriceElement = document.createElement('li');
-        totalPriceElement.textContent = `총 합계: ${totalAmount}원`;
+        totalPriceElement.textContent = `총 합계: ${totalAmount.toLocaleString()}원`;
         receiptList.appendChild(totalPriceElement);
-    
-        // 영수증 표시
+
         receiptDiv.classList.remove('hidden');
-    
-        // 판매 내역 기록
+
         saveSalesLog(cartItems, totalAmount);
-    
-        // 장바구니 비우기 및 갱신
+
         cartItems = [];
         updateCart();
     }
-    
 
     function saveSalesLog(items, totalAmount) {
         const salesLog = JSON.parse(localStorage.getItem('salesLog')) || [];
-        salesLog.push({ items, totalAmount });
+        salesLog.push({ items, totalAmount, date: new Date().toLocaleString() });
         localStorage.setItem('salesLog', JSON.stringify(salesLog));
     }
 
@@ -107,27 +102,28 @@ window.onload = function () {
         const menuName = menuNameInput.value.trim();
         const menuPrice = parseFloat(menuPriceInput.value.trim());
 
+        if (!menuName || isNaN(menuPrice)) {
+            alert('메뉴 이름과 가격을 올바르게 입력해주세요.');
+            return;
+        }
+
         const existingMenu = JSON.parse(localStorage.getItem('menuList')) || [];
         if (existingMenu.some(item => item.name === menuName)) {
             alert('이미 존재하는 메뉴입니다.');
             return;
         }
 
-        if (menuName && !isNaN(menuPrice)) {
-            const newMenuItem = document.createElement('div');
-            newMenuItem.className = 'menu-item';
-            newMenuItem.draggable = true;
-            newMenuItem.dataset.name = menuName;
-            newMenuItem.dataset.price = menuPrice;
-            newMenuItem.innerHTML = `${menuName} - ${menuPrice}원`;
-            menuItemsContainer.appendChild(newMenuItem);
+        const newMenuItem = document.createElement('div');
+        newMenuItem.className = 'menu-item';
+        newMenuItem.draggable = true;
+        newMenuItem.dataset.name = menuName;
+        newMenuItem.dataset.price = menuPrice;
+        newMenuItem.innerHTML = `${menuName} - ${menuPrice.toLocaleString()}원`;
+        menuItemsContainer.appendChild(newMenuItem);
 
-            saveMenu(menuName, menuPrice);
-            menuNameInput.value = '';
-            menuPriceInput.value = '';
-        } else {
-            alert('메뉴 이름과 가격을 올바르게 입력해주세요.');
-        }
+        saveMenu(menuName, menuPrice);
+        menuNameInput.value = '';
+        menuPriceInput.value = '';
     }
 
     function saveMenu(name, price) {
@@ -144,7 +140,7 @@ window.onload = function () {
             newMenuItem.draggable = true;
             newMenuItem.dataset.name = menu.name;
             newMenuItem.dataset.price = menu.price;
-            newMenuItem.innerHTML = `${menu.name} - ${menu.price}원`;
+            newMenuItem.innerHTML = `${menu.name} - ${menu.price.toLocaleString()}원`;
             menuItemsContainer.appendChild(newMenuItem);
         });
     }
@@ -154,12 +150,12 @@ window.onload = function () {
         const salesLog = JSON.parse(localStorage.getItem('salesLog')) || [];
         salesLog.forEach(sale => {
             const saleItem = document.createElement('li');
-            saleItem.textContent = `${sale.items.map(item => `${item.name} x${item.quantity}`).join(', ')} - ${sale.totalAmount}원`;
+            saleItem.textContent = `${sale.items.map(item => `${item.name} x${item.quantity}`).join(', ')} - ${sale.totalAmount.toLocaleString()}원`;
             salesList.appendChild(saleItem);
             totalSales += sale.totalAmount;
         });
 
-        totalSalesSpan.textContent = totalSales;
+        totalSalesSpan.textContent = totalSales.toLocaleString();
     }
 
     menuItemsContainer.addEventListener('dragstart', function(event) {
@@ -171,18 +167,38 @@ window.onload = function () {
         }
     });
 
+    cart.addEventListener('dragstart', function(event) {
+        if (event.target.classList.contains('cart-item')) {
+            event.dataTransfer.setData('cart', JSON.stringify({
+                name: event.target.dataset.name
+            }));
+        }
+    });
+
+    menuItemsContainer.addEventListener('dragover', event => event.preventDefault());
     cart.addEventListener('dragover', event => event.preventDefault());
+
     cart.addEventListener('drop', function(event) {
         event.preventDefault();
         const data = event.dataTransfer.getData('menu');
         const menu = JSON.parse(data);
 
-        if (cartItems.some(item => item.name === menu.name)) {
-            alert('이미 장바구니에 있는 메뉴입니다.');
-            return;
+        const existingItem = cartItems.find(item => item.name === menu.name);
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cartItems.push({ ...menu, quantity: 1 });
         }
 
-        cartItems.push({ ...menu, quantity: 1 });
+        updateCart();
+    });
+
+    menuItemsContainer.addEventListener('drop', function(event) {
+        event.preventDefault();
+        const data = event.dataTransfer.getData('cart');
+        const cartItem = JSON.parse(data);
+
+        cartItems = cartItems.filter(item => item.name !== cartItem.name);
         updateCart();
     });
 
@@ -212,7 +228,7 @@ window.onload = function () {
     clearSalesLogButton.addEventListener('click', () => {
         salesList.innerHTML = '';
         totalSales = 0;
-        totalSalesSpan.textContent = totalSales;
+        totalSalesSpan.textContent = totalSales.toLocaleString();
         localStorage.removeItem('salesLog');
     });
 

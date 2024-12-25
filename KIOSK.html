@@ -8,72 +8,82 @@
     <script src="KIOSKscript.js" defer></script>
 </head>
 <body>
-    <h1>Drag and Drop KIOSK</h1>
-    <div class="menu">
-        <h2>메뉴</h2>
-        <div class="menu-item" draggable="true" data-name="아메리카노" data-price="2500">
-            <img src="images/americano.jpg" alt="아메리카노">
-            <p>아메리카노 - 2,500원</p>
+    <header>
+        <h1>DIT 카페</h1>
+    </header>
+    
+    <main class="container">
+        <section class="menu">
+            <div class="menu-items">
+                <div class="menu-item" draggable="true" data-name="아메리카노" data-price="2500">
+                    <img src="images/americano.jpg" alt="아메리카노">
+                    <p>아메리카노 - 2,500원</p>
+                </div>
+                <div class="menu-item" draggable="true" data-name="카페라떼" data-price="3000">
+                    <img src="images/latte.jpg" alt="카페라떼">
+                    <p>카페라떼 - 3,000원</p>
+                </div>
+                <div class="menu-item" draggable="true" data-name="카페모카" data-price="4300">
+                    <img src="images/caffeMocha.jpg" alt="카페모카">
+                    <p>카페모카 - 4,300원</p>
+                </div>
+                <div class="menu-item" draggable="true" data-name="카푸치노" data-price="3000">
+                    <img src="images/cappuccino.jpg" alt="카푸치노">
+                    <p>카푸치노 - 3,000원</p>
+                </div>
+                <div class="menu-item" draggable="true" data-name="카라멜마끼아토" data-price="3800">
+                    <img src="images/CaramelMacchiato.jpg" alt="카라멜마끼아토">
+                    <p>카라멜마끼아토 - 3,800원</p>
+                </div>
+                <div class="menu-item" draggable="true" data-name="초코라떼" data-price="3500">
+                    <img src="images/chocoLatte.jpg" alt="초코라떼">
+                    <p>초코라떼 - 3,500원</p>
+                </div>
+                <div class="menu-item" draggable="true" data-name="에소프레소" data-price="2500">
+                    <img src="images/esopresso.jpg" alt="에소프레소">
+                    <p>에소프레소 - 2,500원</p>
+                </div>
+                <div class="menu-item" draggable="true" data-name="밀크티" data-price="3800">
+                    <img src="images/MilkTea.jpg" alt="밀크티">
+                    <p>밀크티 - 3,800원</p>
+                </div>
+                <div class="menu-item" draggable="true" data-name="딸기스무디" data-price="4300">
+                    <img src="images/strawberrySmoothie.jpg" alt="딸기스무디">
+                    <p>딸기스무디 - 4,300원</p>
+                </div>
+            </div>
+        </section>
+        
+        <aside class="cart">
+            <h2>장바구니</h2>
+            <div class="empty-message">드래그하여 메뉴를 추가하세요.</div>
+        </aside>
+    </main>
+
+    <footer>
+        <button class="checkout" disabled>결제</button>
+        <div class="receipt hidden">
+            <h2>영수증</h2>
+            <ul id="receipt-list"></ul>
+            <p>총액: <span id="total-price">0</span>원</p>
         </div>
-        <div class="menu-item" draggable="true" data-name="카페라떼" data-price="3000">
-            <img src="images/latte.jpg" alt="카페라떼">
-            <p>카페라떼 - 3000원</p>
+        <div class="admin-access">
+            <input type="password" id="admin-password" placeholder="관리자 비밀번호 입력">
+            <button id="admin-login">로그인</button>
         </div>
-        <div class="menu-item" draggable="true" data-name="카푸치노" data-price="3000">
-            <img src="images/cappuccino.jpg" alt="카푸치노">
-            <p>카푸치노 - 3,000원</p>
+        <div class="management hidden">
+            <h2>관리자 기능</h2>
+            <input type="text" id="menu-name" placeholder="메뉴 이름">
+            <input type="number" id="menu-price" placeholder="메뉴 가격">
+            <button id="add-menu">메뉴 추가</button>
+            <button id="clear-sales-log">판매 내역 초기화</button>
+            <div class="sales-log">
+                <h3>판매 내역</h3>
+                <ul id="sales-list"></ul>
+                <p>총 판매 금액: <span id="total-sales">0</span>원</p>
+            </div>
+            <button id="admin-logout">로그아웃</button>
         </div>
-        <div class="menu-item" draggable="true" data-name="카라멜마끼아토" data-price="3800">
-            <img src="images/CaramelMacchiato.jpg" alt="카라멜마끼아토">
-            <p>카라멜마끼아토 - 3,800원</p>
-        </div>
-        <div class="menu-item" draggable="true" data-name="초코라떼" data-price="3500">
-            <img src="images/chocoLatte.jpg" alt="초코라떼">
-            <p>초코라떼 - 3,500원</p>
-        </div>
-        <div class="menu-item" draggable="true" data-name="에소프레소" data-price="2500">
-            <img src="images/esopresso.jpg" alt="에소프레소">
-            <p>에소프레소 - 2,500원</p>
-        </div>
-        <div class="menu-item" draggable="true" data-name="카페라떼" data-price="3000">
-            <img src="images/latte.jpg" alt="카페라떼">
-            <p>카페라떼 - 3,000원</p>
-        </div>
-        <div class="menu-item" draggable="true" data-name="밀크티" data-price="3800">
-            <img src="images/MilkTea.jpg" alt="밀크티">
-            <p>밀크티 - 3,800원</p>
-        </div>
-        <div class="menu-item" draggable="true" data-name="딸기스무디" data-price="4300">
-            <img src="images/strawberrySmoothie.jpg" alt="딸기스무디">
-            <p>딸기스무디 - 4,300원</p>
-        </div>
-    </div>
-    <div class="cart">
-        <h2>장바구니</h2>
-        <div class="empty-message">드래그하여 메뉴를 추가하세요.</div>
-    </div>
-    <button class="checkout" disabled>결제</button>
-    <div class="receipt hidden">
-        <h2>영수증</h2>
-        <ul id="receipt-list"></ul>
-        <p>총액: <span id="total-price">0</span>원</p>
-    </div>
-    <div class="admin-access">
-        <input type="password" id="admin-password" placeholder="관리자 비밀번호 입력">
-        <button id="admin-login">로그인</button>
-    </div>
-    <div class="management hidden">
-        <h2>관리자 기능</h2>
-        <input type="text" id="menu-name" placeholder="메뉴 이름">
-        <input type="number" id="menu-price" placeholder="메뉴 가격">
-        <button id="add-menu">메뉴 추가</button>
-        <button id="clear-sales-log">판매 내역 초기화</button>
-        <div class="sales-log">
-            <h3>판매 내역</h3>
-            <ul id="sales-list"></ul>
-            <p>총 판매 금액: <span id="total-sales">0</span>원</p>
-        </div>
-        <button id="admin-logout">로그아웃</button>
-    </div>
+    </footer>
 </body>
 </html>
